@@ -29,11 +29,30 @@ func (d *driver) Start() *gorm.DB {
 		log.Fatal("Failed to open connection to database!")
 	}
 
-	db.AutoMigrate(&entity.Buyer{})
-	db.AutoMigrate(&entity.Seller{})
-	db.AutoMigrate(&entity.Product{})
-	db.AutoMigrate(&entity.Order{})
-	db.AutoMigrate(&entity.OrderItem{})
+	err = db.AutoMigrate(&entity.Buyer{})
+	if err != nil {
+		log.Fatal("Failed run migration!")
+	}
+
+	err = db.AutoMigrate(&entity.Seller{})
+	if err != nil {
+		log.Fatal("Failed run migration!")
+	}
+
+	err = db.AutoMigrate(&entity.Product{})
+	if err != nil {
+		log.Fatal("Failed run migration!")
+	}
+
+	err = db.AutoMigrate(&entity.Order{})
+	if err != nil {
+		log.Fatal("Failed run migration!")
+	}
+
+	err = db.AutoMigrate(&entity.OrderItem{})
+	if err != nil {
+		log.Fatal("Failed run migration!")
+	}
 
 	return db
 }

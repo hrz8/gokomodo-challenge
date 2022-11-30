@@ -10,7 +10,7 @@ import (
 	"github.com/hrz8/gokomodo-challenge/internal/model/entity"
 	"github.com/hrz8/gokomodo-challenge/internal/repository/db"
 	res "github.com/hrz8/gokomodo-challenge/pkg/util/response"
-	"github.com/mattn/go-sqlite3"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,15 +39,17 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Seller, error) {
 		PickupAddress: body.Address,
 	}
 
+	exists, _ := u.Repository.Seller.FindByEmail(body.Email)
+	if exists != nil {
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.BadRequest,
+			errors.New(""),
+			"email already registered",
+		)
+	}
+
 	result, err := u.Repository.Seller.Create(data)
 	if err != nil {
-		if err.(sqlite3.Error).Code == 19 {
-			return nil, res.ErrorBuilder(
-				&res.ErrorConstant.BadRequest,
-				err,
-				"email already registered",
-			)
-		}
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
 			err,

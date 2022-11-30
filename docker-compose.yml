@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  generous-app:
+    build:
+      context: .
+    image: gokomodo-challenge:1.0
+    environment:
+      JWT_SECRET: secret
+    ports:
+      - 3000:3000
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  data:

@@ -11,8 +11,8 @@ test:
 docker-build:
 	docker build --tag gokomodo-challenge:1.0 .
 
-docker-build-start:
-	docker create --name gokomodo-app gokomodo-challenge:1.0
+docker-start:
+	docker create --name gokomodo-app -p 3000:3000 gokomodo-challenge:1.0
 	docker start gokomodo-app
 	docker logs gokomodo-app -f
 

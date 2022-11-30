@@ -1,6 +1,7 @@
 package buyer
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/hrz8/gokomodo-challenge/internal/model/entity"
 	"github.com/hrz8/gokomodo-challenge/internal/repository/db"
 	res "github.com/hrz8/gokomodo-challenge/pkg/util/response"
-	"github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,15 +39,17 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Buyer, error) {
 		RecipientAddress: body.Address,
 	}
 
+	exists, _ := u.Repository.Buyer.FindByEmail(body.Email)
+	if exists != nil {
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.BadRequest,
+			errors.New(""),
+			"email already registered",
+		)
+	}
+
 	result, err := u.Repository.Buyer.Create(data)
 	if err != nil {
-		if err.(sqlite3.Error).Code == 19 {
-			return nil, res.ErrorBuilder(
-				&res.ErrorConstant.BadRequest,
-				err,
-				"email already registered",
-			)
-		}
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
 			err,

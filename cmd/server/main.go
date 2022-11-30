@@ -8,7 +8,7 @@ import (
 
 func main() {
 	httpDriver := http.NewDriver()
-	sqliteDriver := sqlite.NewDriver("database/db.sqlite")
+	sqliteDriver := sqlite.NewDriver("db.sqlite")
 
 	factory := factory.NewFactory(httpDriver, sqliteDriver)
 
