@@ -3,6 +3,7 @@ package sqlite
 import (
 	"log"
 
+	"github.com/hrz8/gokomodo-challenge/internal/model/entity"
 	sqliteDriver "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -22,6 +23,12 @@ func (d *driver) Start() *gorm.DB {
 	if err != nil {
 		log.Fatal("Failed to open connection to database!")
 	}
+
+	db.AutoMigrate(&entity.Buyer{})
+	db.AutoMigrate(&entity.Seller{})
+	db.AutoMigrate(&entity.Product{})
+	db.AutoMigrate(&entity.Order{})
+	db.AutoMigrate(&entity.OrderItem{})
 
 	return db
 }
