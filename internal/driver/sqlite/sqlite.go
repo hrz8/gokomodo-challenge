@@ -1,7 +1,9 @@
 package sqlite
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/hrz8/gokomodo-challenge/internal/model/entity"
 	sqliteDriver "gorm.io/driver/sqlite"
@@ -19,7 +21,10 @@ type (
 )
 
 func (d *driver) Start() *gorm.DB {
+	pwd, _ := os.Getwd()
+	fmt.Println(pwd)
 	db, err := gorm.Open(sqliteDriver.Open(d.File), &gorm.Config{})
+
 	if err != nil {
 		log.Fatal("Failed to open connection to database!")
 	}
@@ -34,7 +39,5 @@ func (d *driver) Start() *gorm.DB {
 }
 
 func NewDriver(dbPath string) IDriverSqlite {
-	return &driver{
-		File: dbPath,
-	}
+	return &driver{dbPath}
 }

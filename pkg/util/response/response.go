@@ -22,7 +22,7 @@ var SuccessConstant successConstant = successConstant{
 		Response: successResponse{
 			Meta: Meta{
 				Success: true,
-				Message: "Request successfully proceed",
+				Message: "request successfully proceed",
 			},
 			Data: nil,
 		},

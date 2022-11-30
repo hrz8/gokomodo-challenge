@@ -29,7 +29,5 @@ func (u *usecase) Login(body dto.LoginRequest) (*dto.LoginResponse, error) {
 }
 
 func NewUsecase(r *db.Repository) IUsecaseBuyer {
-	return &usecase{
-		Repository: r,
-	}
+	return &usecase{r}
 }

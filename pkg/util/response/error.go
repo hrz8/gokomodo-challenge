@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/labstack/echo/v4"
 )
 
 type errorResponse struct {
@@ -162,19 +164,6 @@ func ErrorBuilder(res *Error, message error, customMessage ...string) *Error {
 	return res
 }
 
-func CustomErrorBuilder(code int, err string, message string) *Error {
-	return &Error{
-		Response: errorResponse{
-			Meta: Meta{
-				Success: false,
-				Message: message,
-			},
-			Error: err,
-		},
-		Code: code,
-	}
-}
-
 func ErrorResponse(err error) *Error {
 	re, ok := err.(*Error)
 	if ok {
@@ -190,4 +179,8 @@ func (e *Error) Error() string {
 
 func (e *Error) ParseToError() error {
 	return e
+}
+
+func (e *Error) Send(c echo.Context) error {
+	return c.JSON(e.Code, e.Response)
 }

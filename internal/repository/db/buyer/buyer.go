@@ -24,7 +24,5 @@ func (r *repository) FindByEmail(email string) (*entity.Buyer, error) {
 }
 
 func NewRepository(conn *gorm.DB) IRepositoryBuyer {
-	return &repository{
-		Conn: conn,
-	}
+	return &repository{conn}
 }

@@ -28,8 +28,5 @@ func NewDelivery(
 	r *db.Repository,
 	u *usecase.Usecase,
 ) IDeliveryApi {
-	return &delivery{
-		Repository: r,
-		Usecase:    u,
-	}
+	return &delivery{r, u}
 }

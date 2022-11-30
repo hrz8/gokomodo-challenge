@@ -7,6 +7,7 @@ import (
 	"github.com/hrz8/gokomodo-challenge/internal/delivery/api"
 	"github.com/hrz8/gokomodo-challenge/internal/repository/db"
 	"github.com/hrz8/gokomodo-challenge/internal/usecase"
+	"github.com/hrz8/gokomodo-challenge/pkg/util/validator"
 	"gorm.io/gorm"
 
 	"github.com/labstack/echo/v4"
@@ -39,6 +40,11 @@ func (d *driver) Start(conn *gorm.DB) error {
 
 func NewDriver() IDriverHttp {
 	e := echo.New()
+
+	// middleware
+	e.Validator = &validator.CustomValidator{
+		Validator: validator.NewValidator(),
+	}
 
 	return &driver{e}
 }
