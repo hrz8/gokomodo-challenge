@@ -25,6 +25,7 @@ const (
 	E_UNPROCESSABLE_ENTITY = "unprocessable_entity"
 	E_DUPLICATE_ENTITY     = "duplicate_entity"
 	E_UNAUTHORIZED         = "unauthorized"
+	E_UNAUTHENTICATED      = "unauthenticated"
 	E_BAD_REQUEST          = "bad_request"
 	E_VALIDATION           = "validation"
 	E_SERVER_ERROR         = "server_error"
@@ -37,6 +38,7 @@ type errorConstant struct {
 	UnprocessableEntity      Error
 	DuplicateEntity          Error
 	Unauthorized             Error
+	Unauthenticated          Error
 	BadRequest               Error
 	Validation               Error
 	InternalServerError      Error
@@ -111,11 +113,21 @@ var ErrorConstant errorConstant = errorConstant{
 		Response: errorResponse{
 			Meta: Meta{
 				Success: false,
-				Message: "Unauthorized, please login",
+				Message: "Unauthorized",
 			},
 			Error: E_UNAUTHORIZED,
 		},
 		Code: http.StatusUnauthorized,
+	},
+	Unauthenticated: Error{
+		Response: errorResponse{
+			Meta: Meta{
+				Success: false,
+				Message: "Unauthenticated",
+			},
+			Error: E_UNAUTHENTICATED,
+		},
+		Code: http.StatusForbidden,
 	},
 	BadRequest: Error{
 		Response: errorResponse{

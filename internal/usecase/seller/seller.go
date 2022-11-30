@@ -21,6 +21,7 @@ type (
 
 	IUsecaseSeller interface {
 		Register(body *dto.RegisterRequest) (*entity.Seller, error)
+		FindById(id string) (*entity.Seller, error)
 		Login(email string, password string) (*entity.Seller, error)
 		GenerateToken(id string) (string, error)
 	}
@@ -45,6 +46,24 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Seller, error) {
 				&res.ErrorConstant.BadRequest,
 				err,
 				"email already registered",
+			)
+		}
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
+
+	return result, nil
+}
+
+func (u *usecase) FindById(id string) (*entity.Seller, error) {
+	result, err := u.Repository.Seller.FindById(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, res.ErrorBuilder(
+				&res.ErrorConstant.NotFound,
+				err,
 			)
 		}
 		return nil, res.ErrorBuilder(

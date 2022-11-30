@@ -12,17 +12,28 @@ type (
 
 	IRepositorySeller interface {
 		Create(data *entity.Seller) (*entity.Seller, error)
+		FindById(id string) (*entity.Seller, error)
 		FindByEmail(email string) (*entity.Seller, error)
 	}
 )
 
 func (r *repository) Create(data *entity.Seller) (*entity.Seller, error) {
-	err := r.Conn.Create(data).Error
+	err := r.Conn.Debug().Create(data).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return data, nil
+}
+
+func (r *repository) FindById(id string) (*entity.Seller, error) {
+	result := new(entity.Seller)
+	err := r.Conn.Debug().Where("`id` = ?", id).First(&result).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (r *repository) FindByEmail(email string) (*entity.Seller, error) {

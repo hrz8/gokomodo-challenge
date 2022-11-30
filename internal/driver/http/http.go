@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type (
@@ -42,6 +43,7 @@ func NewDriver() IDriverHttp {
 	e := echo.New()
 
 	// middleware
+	e.Pre(middleware.RemoveTrailingSlash())
 	e.Validator = &validator.CustomValidator{
 		Validator: validator.NewValidator(),
 	}
