@@ -20,7 +20,7 @@ Full API Doc: [DOCUMENTATION](https://documenter.getpostman.com/view/6786432/2s8
 
 ## Before Run ☕️
 
-❗️ Tutorial on this page will cover the step by using `yarn`. If you are using `npm`, please make sure you replace all `yarn` command by `npm run`.
+❗️ This app needed `gcc` to run since sqlite3 library required that. Here is the article about that [here](https://7thzero.com/blog/golang-w-sqlite3-docker-scratch-image).
 
 ### Clone Repo 💾
 
@@ -34,13 +34,13 @@ $ git clone https://github.com/hrz8/gokomodo-challenge.git
 
 ### Run Locally 🏃
 
-This command below will compiling the `Golang` to binary file at the first and run the binary right after that.
+This command below will compiling the `main.go` and all used packaged into binary file at the first and run the binary right after that.
 
 ```bash
 $ make run
 ```
 
-It will running in the localhost with the `3000` port given `http://host:{RESTFUL_PORT}`.
+It will running in the localhost with the `3000` port given `http://localhost:3000`.
 
 ### Debugging 🕵️‍♂️
 
