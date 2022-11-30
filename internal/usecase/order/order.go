@@ -17,6 +17,7 @@ type (
 	IUsecaseOrder interface {
 		OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dto.OrderProductResponse, error)
 		AcceptOrder(id string) (map[string]string, error)
+		ListOrders(page uint16, limit uint16, isBuyer bool, sub string) (*[]dto.OrderDetailResponse, error)
 	}
 )
 
@@ -133,6 +134,44 @@ func (u *usecase) AcceptOrder(id string) (map[string]string, error) {
 	result["status"] = string(status)
 
 	return result, nil
+}
+
+func (u *usecase) ListOrders(page uint16, limit uint16, isBuyer bool, sub string) (*[]dto.OrderDetailResponse, error) {
+	result := []dto.OrderDetailResponse{}
+
+	data, err := u.Repository.Order.List(page, limit, isBuyer, sub)
+	if err != nil {
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
+
+	for _, d := range *data {
+		items := []dto.OrderItemResponse{}
+
+		for _, i := range d.Item {
+			items = append(items, dto.OrderItemResponse{
+				ProductID:   i.ProductID,
+				ProductName: i.ProductName,
+				Price:       i.Price,
+				Quantity:    i.Quantity,
+			})
+		}
+
+		result = append(result, dto.OrderDetailResponse{
+			ID:            d.ID,
+			Status:        d.Status,
+			TotalPrice:    d.TotalPrice,
+			BuyerName:     d.Buyer.Name,
+			BuyerAddress:  d.Buyer.RecipientAddress,
+			SellerName:    d.Seller.Name,
+			SellerAddress: d.Seller.PickupAddress,
+			Items:         items,
+		})
+	}
+
+	return &result, nil
 }
 
 func NewUsecase(r *db.Repository) IUsecaseOrder {
