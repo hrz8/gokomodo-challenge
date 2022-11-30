@@ -40,4 +40,12 @@ type (
 		Description string    `json:"description"`
 		Price       uint16    `json:"price"`
 	}
+
+	ProductDetailResponse struct {
+		ID          uuid.UUID `json:"id"`
+		SellerID    uuid.UUID `json:"seller_id"`
+		Name        string    `json:"name"`
+		Description string    `json:"description"`
+		Price       uint16    `json:"price"`
+	}
 )

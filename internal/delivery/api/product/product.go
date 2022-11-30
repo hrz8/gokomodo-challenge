@@ -6,6 +6,7 @@ import (
 	"github.com/hrz8/gokomodo-challenge/internal/model/dto"
 	"github.com/hrz8/gokomodo-challenge/internal/usecase"
 	"github.com/hrz8/gokomodo-challenge/pkg/util/auth"
+	"github.com/hrz8/gokomodo-challenge/pkg/util/parser"
 	res "github.com/hrz8/gokomodo-challenge/pkg/util/response"
 	"github.com/labstack/echo/v4"
 )
@@ -16,6 +17,7 @@ type delivery struct {
 
 func (d *delivery) Route(g *echo.Group) {
 	g.POST("", d.AddNewProduct)
+	g.GET("", d.ListProduct)
 }
 
 func (d *delivery) AddNewProduct(ctx echo.Context) error {
@@ -57,6 +59,32 @@ func (d *delivery) AddNewProduct(ctx echo.Context) error {
 	}
 
 	data, err := d.Usecase.Product.AddProduct(body, seller)
+	if err != nil {
+		return res.ErrorResponse(err).Send(ctx)
+	}
+
+	return res.SuccessResponse(data).Send(ctx)
+}
+
+func (d *delivery) ListProduct(ctx echo.Context) error {
+	_, err := auth.VerifyJWT(&ctx)
+	if err != nil {
+		return res.ErrorResponse(err).Send(ctx)
+	}
+
+	queryParams := ctx.QueryParams()
+	qpPage, pageExist := queryParams["page"]
+	qpLimit, limitExists := queryParams["limit"]
+
+	if !pageExist || !limitExists {
+		qpPage = []string{"1"}
+		qpLimit = []string{"10"}
+	}
+
+	page := uint16(parser.ParseStringToInt(qpPage[0]))
+	limit := uint16(parser.ParseStringToInt(qpLimit[0]))
+
+	data, err := d.Usecase.Product.ListProduct(page, limit)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}

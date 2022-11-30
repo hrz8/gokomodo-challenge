@@ -15,6 +15,7 @@ type (
 
 	IUsecaseSeller interface {
 		AddProduct(body *dto.AddProductRequest, seller *entity.Seller) (*dto.AddProductResponse, error)
+		ListProduct(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error)
 	}
 )
 
@@ -44,6 +45,30 @@ func (u *usecase) AddProduct(body *dto.AddProductRequest, seller *entity.Seller)
 		Description: result.Description,
 		Price:       result.Price,
 	}, nil
+}
+
+func (u *usecase) ListProduct(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error) {
+	result := []dto.ProductDetailResponse{}
+
+	data, err := u.Repository.Product.List(page, limit)
+	if err != nil {
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
+
+	for _, d := range *data {
+		result = append(result, dto.ProductDetailResponse{
+			ID:          d.ID,
+			SellerID:    d.SellerID,
+			Name:        d.ProductName,
+			Description: d.Description,
+			Price:       d.Price,
+		})
+	}
+
+	return &result, nil
 }
 
 func NewUsecase(r *db.Repository) IUsecaseSeller {
