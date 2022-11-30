@@ -27,7 +27,7 @@ func (r *repository) Create(data *entity.Seller) (*entity.Seller, error) {
 
 func (r *repository) FindByEmail(email string) (*entity.Seller, error) {
 	result := new(entity.Seller)
-	err := r.Conn.Model(entity.Seller{Email: email}).First(&result).Error
+	err := r.Conn.Debug().Where("`email` = ?", email).First(&result).Error
 	if err != nil {
 		return nil, err
 	}

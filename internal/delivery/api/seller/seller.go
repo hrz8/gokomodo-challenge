@@ -33,7 +33,7 @@ func (d *delivery) Register(ctx echo.Context) error {
 		).Send(ctx)
 	}
 
-	data, err := d.Usecase.SellerRepository.Register(body)
+	data, err := d.Usecase.Seller.Register(body)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}
@@ -63,12 +63,12 @@ func (d *delivery) Login(ctx echo.Context) error {
 		).Send(ctx)
 	}
 
-	result, err := d.Usecase.SellerRepository.Login(body.Email, body.Password)
+	result, err := d.Usecase.Seller.Login(body.Email, body.Password)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}
 
-	token, err := d.Usecase.SellerRepository.GenerateToken(result.ID.String())
+	token, err := d.Usecase.Seller.GenerateToken(result.ID.String())
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}

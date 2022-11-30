@@ -38,7 +38,7 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Seller, error) {
 		PickupAddress: body.Address,
 	}
 
-	result, err := u.Repository.SellerRepository.Create(data)
+	result, err := u.Repository.Seller.Create(data)
 	if err != nil {
 		if err.(sqlite3.Error).Code == 19 {
 			return nil, res.ErrorBuilder(
@@ -46,27 +46,33 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Seller, error) {
 				err,
 				"email already registered",
 			)
-		} else {
-			return nil, res.ErrorBuilder(
-				&res.ErrorConstant.InternalServerError,
-				err,
-			)
 		}
-	}
-
-	return result, nil
-}
-
-func (u *usecase) Login(email string, password string) (*entity.Seller, error) {
-	result, err := u.Repository.SellerRepository.FindByEmail(email)
-	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
 			err,
 		)
 	}
 
+	return result, nil
+}
+
+func (u *usecase) Login(email string, password string) (*entity.Seller, error) {
 	incorrectError := "email or password incorrect"
+
+	result, err := u.Repository.Seller.FindByEmail(email)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, res.ErrorBuilder(
+				&res.ErrorConstant.EmailOrPasswordIncorrect,
+				err,
+				incorrectError,
+			)
+		}
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
 
 	if result == nil {
 		return nil, res.ErrorBuilder(

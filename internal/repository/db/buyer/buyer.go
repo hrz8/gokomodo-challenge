@@ -1,8 +1,6 @@
 package buyer
 
 import (
-	"fmt"
-
 	"github.com/hrz8/gokomodo-challenge/internal/model/entity"
 	"gorm.io/gorm"
 )
@@ -13,13 +11,27 @@ type (
 	}
 
 	IRepositoryBuyer interface {
+		Create(data *entity.Buyer) (*entity.Buyer, error)
 		FindByEmail(email string) (*entity.Buyer, error)
 	}
 )
 
+func (r *repository) Create(data *entity.Buyer) (*entity.Buyer, error) {
+	err := r.Conn.Create(data).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (r *repository) FindByEmail(email string) (*entity.Buyer, error) {
-	fmt.Println("this is repository", r)
-	result := &entity.Buyer{}
+	result := new(entity.Buyer)
+	err := r.Conn.Debug().Where("`email` = ?", email).First(&result).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return result, nil
 }
 

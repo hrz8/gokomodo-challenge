@@ -17,7 +17,7 @@ type Product struct {
 	SellerID uuid.UUID `gorm:"size:40" json:"-"`
 	Seller   Seller    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"seller,omitempty"`
 	// timestamp
-	CreatedAt time.Time      `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	CreatedAt time.Time      `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt time.Time      `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;index" json:"-"`
 }

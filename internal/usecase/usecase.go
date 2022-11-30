@@ -9,15 +9,15 @@ import (
 type Usecase struct {
 	DBRepository *db.Repository
 
-	BuyerUsecase     buyer.IUsecaseBuyer
-	SellerRepository seller.IUsecaseSeller
+	Buyer  buyer.IUsecaseBuyer
+	Seller seller.IUsecaseSeller
 }
 
 func NewUsecase(dbRepository *db.Repository) *Usecase {
 	return &Usecase{
 		DBRepository: dbRepository,
 
-		BuyerUsecase:     buyer.NewUsecase(dbRepository),
-		SellerRepository: seller.NewUsecase(dbRepository),
+		Buyer:  buyer.NewUsecase(dbRepository),
+		Seller: seller.NewUsecase(dbRepository),
 	}
 }

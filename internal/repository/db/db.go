@@ -9,15 +9,15 @@ import (
 type Repository struct {
 	DB *gorm.DB
 
-	BuyerRepository  buyer.IRepositoryBuyer
-	SellerRepository seller.IRepositorySeller
+	Buyer  buyer.IRepositoryBuyer
+	Seller seller.IRepositorySeller
 }
 
 func NewRepository(conn *gorm.DB) *Repository {
 	return &Repository{
 		DB: conn,
 
-		BuyerRepository:  buyer.NewRepository(conn),
-		SellerRepository: seller.NewRepository(conn),
+		Buyer:  buyer.NewRepository(conn),
+		Seller: seller.NewRepository(conn),
 	}
 }
