@@ -15,7 +15,8 @@ type (
 
 	IUsecaseSeller interface {
 		AddProduct(body *dto.AddProductRequest, seller *entity.Seller) (*dto.AddProductResponse, error)
-		ListProduct(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error)
+		FindById(id string) (*entity.Product, error)
+		ListProducts(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error)
 	}
 )
 
@@ -47,7 +48,25 @@ func (u *usecase) AddProduct(body *dto.AddProductRequest, seller *entity.Seller)
 	}, nil
 }
 
-func (u *usecase) ListProduct(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error) {
+func (u *usecase) FindById(id string) (*entity.Product, error) {
+	result, err := u.Repository.Product.FindById(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, res.ErrorBuilder(
+				&res.ErrorConstant.NotFound,
+				err,
+			)
+		}
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
+
+	return result, nil
+}
+
+func (u *usecase) ListProducts(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error) {
 	result := []dto.ProductDetailResponse{}
 
 	data, err := u.Repository.Product.List(page, limit)

@@ -13,6 +13,7 @@ type (
 
 	IRepositoryProduct interface {
 		Create(data *entity.Product) (*entity.Product, error)
+		FindById(id string) (*entity.Product, error)
 		List(page uint16, limit uint16) (*[]entity.Product, error)
 	}
 )
@@ -23,6 +24,16 @@ func (r *repository) Create(data *entity.Product) (*entity.Product, error) {
 	}
 
 	return data, nil
+}
+
+func (r *repository) FindById(id string) (*entity.Product, error) {
+	result := new(entity.Product)
+	err := r.Conn.Debug().Where("`id` = ?", id).First(&result).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (r *repository) List(page uint16, limit uint16) (*[]entity.Product, error) {

@@ -48,4 +48,20 @@ type (
 		Description string    `json:"description"`
 		Price       uint16    `json:"price"`
 	}
+
+	OrderProductRequest struct {
+		ProductID string `json:"product_id" validate:"required"`
+		Quantity  uint16 `json:"quantity" validate:"required"`
+	}
+
+	OrderedProduct struct {
+		ProductID uuid.UUID `json:"product_id"`
+		Quantity  uint16    `json:"quantity"`
+		Price     uint16    `json:"price"`
+	}
+
+	OrderProductResponse struct {
+		Products   []OrderedProduct `json:"products"`
+		TotalPrice uint16           `json:"total_price"`
+	}
 )

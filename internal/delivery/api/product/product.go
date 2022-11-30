@@ -17,7 +17,7 @@ type delivery struct {
 
 func (d *delivery) Route(g *echo.Group) {
 	g.POST("", d.AddNewProduct)
-	g.GET("", d.ListProduct)
+	g.GET("", d.ListProducts)
 }
 
 func (d *delivery) AddNewProduct(ctx echo.Context) error {
@@ -66,7 +66,7 @@ func (d *delivery) AddNewProduct(ctx echo.Context) error {
 	return res.SuccessResponse(data).Send(ctx)
 }
 
-func (d *delivery) ListProduct(ctx echo.Context) error {
+func (d *delivery) ListProducts(ctx echo.Context) error {
 	_, err := auth.VerifyJWT(&ctx)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
@@ -84,7 +84,7 @@ func (d *delivery) ListProduct(ctx echo.Context) error {
 	page := uint16(parser.ParseStringToInt(qpPage[0]))
 	limit := uint16(parser.ParseStringToInt(qpLimit[0]))
 
-	data, err := d.Usecase.Product.ListProduct(page, limit)
+	data, err := d.Usecase.Product.ListProducts(page, limit)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}

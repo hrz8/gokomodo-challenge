@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/hrz8/gokomodo-challenge/internal/delivery/api/buyer"
+	"github.com/hrz8/gokomodo-challenge/internal/delivery/api/order"
 	"github.com/hrz8/gokomodo-challenge/internal/delivery/api/product"
 	"github.com/hrz8/gokomodo-challenge/internal/delivery/api/seller"
 	"github.com/hrz8/gokomodo-challenge/internal/repository/db"
@@ -23,7 +24,8 @@ type (
 func (d *delivery) Start(e *echo.Echo) {
 	buyer.NewDelivery(d.Usecase).Route(e.Group("buyer"))
 	seller.NewDelivery(d.Usecase).Route(e.Group("seller"))
-	product.NewDelivery(d.Usecase).Route(e.Group("product"))
+	product.NewDelivery(d.Usecase).Route(e.Group("products"))
+	order.NewDelivery(d.Usecase).Route(e.Group("orders"))
 }
 
 func NewDelivery(
