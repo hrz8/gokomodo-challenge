@@ -16,6 +16,7 @@ type (
 
 	IUsecaseOrder interface {
 		OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dto.OrderProductResponse, error)
+		AcceptOrder(id string) (map[string]string, error)
 	}
 )
 
@@ -107,9 +108,31 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 	}
 
 	return &dto.OrderProductResponse{
+		OrderID:    result.ID.String(),
 		Products:   products,
 		TotalPrice: result.TotalPrice,
 	}, nil
+}
+
+func (u *usecase) AcceptOrder(id string) (map[string]string, error) {
+	result := map[string]string{}
+	status, err := u.Repository.Order.Accept(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, res.ErrorBuilder(
+				&res.ErrorConstant.NotFound,
+				err,
+			)
+		}
+		return nil, res.ErrorBuilder(
+			&res.ErrorConstant.InternalServerError,
+			err,
+		)
+	}
+
+	result["status"] = string(status)
+
+	return result, nil
 }
 
 func NewUsecase(r *db.Repository) IUsecaseOrder {

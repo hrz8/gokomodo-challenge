@@ -16,6 +16,7 @@ type delivery struct {
 
 func (d *delivery) Route(g *echo.Group) {
 	g.POST("", d.OrderProduct)
+	g.PATCH("/:id/accept", d.Accept)
 }
 
 func (d *delivery) OrderProduct(ctx echo.Context) error {
@@ -49,6 +50,37 @@ func (d *delivery) OrderProduct(ctx echo.Context) error {
 	}
 
 	data, err := d.Usecase.Order.OrderProduct(body, token.Sub)
+	if err != nil {
+		return res.ErrorResponse(err).Send(ctx)
+	}
+
+	return res.SuccessResponse(data).Send(ctx)
+}
+
+func (d *delivery) Accept(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	token, err := auth.VerifyJWT(&ctx)
+	if err != nil {
+		return res.ErrorResponse(err).Send(ctx)
+	}
+
+	seller, err := d.Usecase.Seller.FindById(token.Sub)
+	if err != nil {
+		return res.ErrorBuilder(
+			&res.ErrorConstant.Unauthorized,
+			errors.New("you are not authorized"),
+		).Send(ctx)
+	}
+
+	if seller.ID.String() == "" || token.Aud != "seller" {
+		return res.ErrorBuilder(
+			&res.ErrorConstant.Unauthorized,
+			errors.New("you are not authorized"),
+		).Send(ctx)
+	}
+
+	data, err := d.Usecase.Order.AcceptOrder(id)
 	if err != nil {
 		return res.ErrorResponse(err).Send(ctx)
 	}

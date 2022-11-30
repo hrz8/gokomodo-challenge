@@ -61,6 +61,7 @@ type (
 	}
 
 	OrderProductResponse struct {
+		OrderID    string           `json:"order_id"`
 		Products   []OrderedProduct `json:"products"`
 		TotalPrice uint16           `json:"total_price"`
 	}
