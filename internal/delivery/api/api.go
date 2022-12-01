@@ -12,7 +12,7 @@ import (
 
 type (
 	delivery struct {
-		Repository *db.Repository
+		Repository db.IDBRepository
 		Usecase    *usecase.Usecase
 	}
 
@@ -29,7 +29,7 @@ func (d *delivery) Start(e *echo.Echo) {
 }
 
 func NewDelivery(
-	r *db.Repository,
+	r db.IDBRepository,
 	u *usecase.Usecase,
 ) IDeliveryApi {
 	return &delivery{r, u}

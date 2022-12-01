@@ -16,7 +16,7 @@ import (
 
 type (
 	usecase struct {
-		Repository *db.Repository
+		Repository db.IDBRepository
 	}
 
 	IUsecaseBuyer interface {
@@ -39,7 +39,7 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Buyer, error) {
 		RecipientAddress: body.Address,
 	}
 
-	exists, _ := u.Repository.Buyer.FindByEmail(body.Email)
+	exists, _ := u.Repository.GetBuyerRepository().FindByEmail(body.Email)
 	if exists != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.BadRequest,
@@ -48,7 +48,7 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Buyer, error) {
 		)
 	}
 
-	result, err := u.Repository.Buyer.Create(data)
+	result, err := u.Repository.GetBuyerRepository().Create(data)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -60,7 +60,7 @@ func (u *usecase) Register(body *dto.RegisterRequest) (*entity.Buyer, error) {
 }
 
 func (u *usecase) FindById(id string) (*entity.Buyer, error) {
-	result, err := u.Repository.Buyer.FindById(id)
+	result, err := u.Repository.GetBuyerRepository().FindById(id)
 	if err != nil {
 		if err.Error() == "record not found" {
 			return nil, res.ErrorBuilder(
@@ -80,7 +80,7 @@ func (u *usecase) FindById(id string) (*entity.Buyer, error) {
 func (u *usecase) Login(email string, password string) (*entity.Buyer, error) {
 	incorrectError := "email or password incorrect"
 
-	result, err := u.Repository.Buyer.FindByEmail(email)
+	result, err := u.Repository.GetBuyerRepository().FindByEmail(email)
 	if err != nil {
 		if err.Error() == "record not found" {
 			return nil, res.ErrorBuilder(
@@ -139,6 +139,6 @@ func (u *usecase) GenerateToken(id string) (string, error) {
 	return tokenString, nil
 }
 
-func NewUsecase(r *db.Repository) IUsecaseBuyer {
+func NewUsecase(r db.IDBRepository) IUsecaseBuyer {
 	return &usecase{r}
 }

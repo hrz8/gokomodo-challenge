@@ -11,7 +11,7 @@ import (
 
 type (
 	usecase struct {
-		Repository *db.Repository
+		Repository db.IDBRepository
 	}
 
 	IUsecaseOrder interface {
@@ -26,7 +26,7 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 	sellerIds := []string{}
 	products := []dto.OrderedProduct{}
 
-	buyer, err := u.Repository.Buyer.FindById(sub)
+	buyer, err := u.Repository.GetBuyerRepository().FindById(sub)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -51,7 +51,7 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 				"missing product id",
 			)
 		}
-		product, err := u.Repository.Product.FindById(item.ProductID)
+		product, err := u.Repository.GetProductRepository().FindById(item.ProductID)
 		if err != nil {
 			return nil, res.ErrorBuilder(
 				&res.ErrorConstant.NotFound,
@@ -63,7 +63,7 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 		sellerId := product.SellerID.String()
 
 		if i == 0 {
-			seller, err := u.Repository.Seller.FindById(sellerId)
+			seller, err := u.Repository.GetSellerRepository().FindById(sellerId)
 			if err != nil {
 				return nil, res.ErrorBuilder(
 					&res.ErrorConstant.InternalServerError,
@@ -100,7 +100,7 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 		})
 	}
 
-	result, err := u.Repository.Order.Create(data)
+	result, err := u.Repository.GetOrderRepository().Create(data)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -117,7 +117,7 @@ func (u *usecase) OrderProduct(body *[]dto.OrderProductRequest, sub string) (*dt
 
 func (u *usecase) AcceptOrder(id string) (map[string]string, error) {
 	result := map[string]string{}
-	status, err := u.Repository.Order.Accept(id)
+	status, err := u.Repository.GetOrderRepository().Accept(id)
 	if err != nil {
 		if err.Error() == "record not found" {
 			return nil, res.ErrorBuilder(
@@ -139,7 +139,7 @@ func (u *usecase) AcceptOrder(id string) (map[string]string, error) {
 func (u *usecase) ListOrders(page uint16, limit uint16, isBuyer bool, sub string) (*[]dto.OrderDetailResponse, error) {
 	result := []dto.OrderDetailResponse{}
 
-	data, err := u.Repository.Order.List(page, limit, isBuyer, sub)
+	data, err := u.Repository.GetOrderRepository().List(page, limit, isBuyer, sub)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -174,6 +174,6 @@ func (u *usecase) ListOrders(page uint16, limit uint16, isBuyer bool, sub string
 	return &result, nil
 }
 
-func NewUsecase(r *db.Repository) IUsecaseOrder {
+func NewUsecase(r db.IDBRepository) IUsecaseOrder {
 	return &usecase{r}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type Usecase struct {
-	DBRepository *db.Repository
+	DBRepository db.IDBRepository
 
 	Buyer   buyer.IUsecaseBuyer
 	Seller  seller.IUsecaseSeller
@@ -17,7 +17,7 @@ type Usecase struct {
 	Order   order.IUsecaseOrder
 }
 
-func NewUsecase(dbRepository *db.Repository) *Usecase {
+func NewUsecase(dbRepository db.IDBRepository) *Usecase {
 	return &Usecase{
 		DBRepository: dbRepository,
 

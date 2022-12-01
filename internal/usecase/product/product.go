@@ -10,7 +10,7 @@ import (
 
 type (
 	usecase struct {
-		Repository *db.Repository
+		Repository db.IDBRepository
 	}
 
 	IUsecaseSeller interface {
@@ -31,7 +31,7 @@ func (u *usecase) AddProduct(body *dto.AddProductRequest, seller *entity.Seller)
 		SellerID:    seller.ID,
 	}
 
-	result, err := u.Repository.Product.Create(data)
+	result, err := u.Repository.GetProductRepository().Create(data)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -49,7 +49,7 @@ func (u *usecase) AddProduct(body *dto.AddProductRequest, seller *entity.Seller)
 }
 
 func (u *usecase) FindById(id string) (*entity.Product, error) {
-	result, err := u.Repository.Product.FindById(id)
+	result, err := u.Repository.GetProductRepository().FindById(id)
 	if err != nil {
 		if err.Error() == "record not found" {
 			return nil, res.ErrorBuilder(
@@ -69,7 +69,7 @@ func (u *usecase) FindById(id string) (*entity.Product, error) {
 func (u *usecase) ListProducts(page uint16, limit uint16) (*[]dto.ProductDetailResponse, error) {
 	result := []dto.ProductDetailResponse{}
 
-	data, err := u.Repository.Product.List(page, limit)
+	data, err := u.Repository.GetProductRepository().List(page, limit)
 	if err != nil {
 		return nil, res.ErrorBuilder(
 			&res.ErrorConstant.InternalServerError,
@@ -90,6 +90,6 @@ func (u *usecase) ListProducts(page uint16, limit uint16) (*[]dto.ProductDetailR
 	return &result, nil
 }
 
-func NewUsecase(r *db.Repository) IUsecaseSeller {
+func NewUsecase(r db.IDBRepository) IUsecaseSeller {
 	return &usecase{r}
 }
